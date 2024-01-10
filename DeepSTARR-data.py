@@ -24,13 +24,15 @@ model = AutoModel.from_pretrained("zhihan1996/DNABERT-2-117M")
 
 # Time to tokenize the sequences
 data_train = Dataset.from_dict({'Sequence':Train_sequences['Sequence'],'labels':labels})
+print(data_train[0])
+
+def tokenize_function(examples):
+    return tokenizer(examples['Sequence'], return_tensors="pt", truncation=True, padding="max_length", max_length=249)
+data_tokenizations = data_train.map(tokenize_function, batched=True)
+print(data_tokenizations[0])
 
 
-tokenized_sequences = []
-mean_embeddings = []
-max_embeddings = []
-for dna in tqdm(Train_sequences['Sequence']):
-    tokenized_sequences.append(tokenizer(dna, return_tensors="pt")['input_ids'])
-    hidden_states = model(tokenized_sequences[-1])[0]
-    mean_embeddings.append(torch.mean(hidden_states[0], dim=0))
-    max_embeddings.append(torch.max(hidden_states[0], dim=0))
+hidden_state = model(data_tokenizations['input_ids'])
+print(hidden_state.shape)
+
+

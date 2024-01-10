@@ -1,6 +1,7 @@
 import numpy as np
-
-
+from matplotlib import pyplot as plt
+from sklearn.decomposition import PCA
+import os
 def parse_fasta(fasta_file):
     fasta_dict = {'Sequence':[],'Header':[]}
     current_header = None
@@ -31,9 +32,22 @@ def parse_fasta(fasta_file):
 def parse_header(dict):
     headers = dict['Header']
     labels = np.zeros(len(headers))
-    for header in headers:
-        if header.contains("positive"):
-            labels[headers.index(header)] = 1
+    for i,header in enumerate(headers):
+        if "positive" in header:
+            labels[i] = 1
         else:
-            labels[headers.index(header)] = 0
+            labels[i] = 0
     return labels
+
+def plot_pca_2d(X,path,file_name):
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(X)
+
+    # Plot the results
+    plt.figure(figsize=(8, 6))
+    plt.scatter(X_pca[:, 0], X_pca[:, 1], alpha=0.8)
+    plt.title('2D PCA Plot')
+    plt.xlabel('Principal Component 1')
+    plt.ylabel('Principal Component 2')
+    plt.show()
+    plt.savefig(os.path.join(path,file_name))
