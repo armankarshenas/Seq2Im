@@ -2,6 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 import os
+import random
 def parse_fasta(fasta_file):
     fasta_dict = {'Sequence':[],'Header':[]}
     current_header = None
@@ -51,3 +52,34 @@ def plot_pca_2d(X,path,file_name):
     plt.ylabel('Principal Component 2')
     plt.show()
     plt.savefig(os.path.join(path,file_name))
+
+def shuffle_dict(dict,labels):
+    sequences = dict['Sequence']
+    header = dict['Header']
+    combined_list = list(zip(sequences,labels,header))
+    random.shuffle(combined_list)
+    shuffled_sequences,shuffled_labels,shuffled_header = zip(*combined_list)
+    shuffled_dict = {'Sequence':list(shuffled_sequences),'Header':list(shuffled_header)}
+    return shuffled_dict,list(shuffled_labels)
+
+def plot_pca_2d_labels(X, Y,path,file_name):
+    # Apply PCA to reduce dimensionality to 2
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(X)
+
+    # Create a scatter plot
+    plt.figure(figsize=(8, 6))
+    scatter = plt.scatter(X_pca[:, 0], X_pca[:, 1], c=Y, cmap='viridis', edgecolors='k', s=60)
+
+    # Add labels and title
+    plt.xlabel('Principal Component 1')
+    plt.ylabel('Principal Component 2')
+    plt.title('2D PCA of Observations Colored by Labels')
+
+    # Add legend
+    legend_labels = ['Class 0', 'Class 1']
+    plt.legend(handles=scatter.legend_elements()[0], labels=legend_labels, loc='upper right')
+
+    # Display the plot
+    plt.show()
+    plt.savefig(path +"/"+file_name)

@@ -1,10 +1,10 @@
 import os
-from transformers import AutoTokenizer, AutoModel,TrainingArguments, Trainer
+from transformers import AutoTokenizer, AutoModelForMaskedLM
 import torch
-from FASTA_utils import parse_fasta, parse_header, plot_pca_2d
+from FASTA_utils import parse_fasta, parse_header, plot_pca_2d, shuffle_dict,plot_pca_2d_labels
 from tqdm import tqdm
-import json
-
+import pickle
+import numpy as np
 
 
 Path = "/media/zebrafish/Data2/Arman/DeepSTARR-data/"
@@ -19,8 +19,13 @@ print("Number of headers: ", len(Train_sequences['Header']))
 print("Sequence length: ", len(Train_sequences['Sequence'][0]))
 
 
-tokenizer = AutoTokenizer.from_pretrained("zhihan1996/DNABERT-2-117M")
-model = AutoModel.from_pretrained("zhihan1996/DNABERT-2-117M")
+tokenizer = AutoTokenizer.from_pretrained("InstaDeepAI/nucleotide-transformer-2.5b-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im/")
+model = AutoModelForMaskedLM.from_pretrained("InstaDeepAI/nucleotide-transformer-2.5b-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im/")
+
+# Time to shuffle the sequences
+
+Train_sequences, labels = shuffle_dict(Train_sequences, labels)
+
 
 # Time to tokenize the sequences
 
@@ -28,16 +33,25 @@ tokenized_sequences = []
 mean_embeddings = []
 max_embeddings = []
 for dna in tqdm(Train_sequences['Sequence']):
+    if len(mean_embeddings) > 100:
+        break
     tokenized_sequences.append(tokenizer(dna, return_tensors="pt")['input_ids'])
     hidden_states = model(tokenized_sequences[-1])[0]
-    mean_embeddings.append(torch.mean(hidden_states[0], dim=0))
-    max_embeddings.append(torch.max(hidden_states[0], dim=0))
+    mean_embeddings.append(torch.mean(hidden_states[0], dim=0).detach().numpy())
+    max_embeddings.append(torch.max(hidden_states[0], dim=0).values.detach().numpy())
+
+print("Number of tokenized sequences: ", len(tokenized_sequences))
+print("shape of the mean embedding: ", mean_embeddings[0].shape)
+print("shape of the max embedding: ", max_embeddings[0].shape)
+
+
+
 file_path = "/media/zebrafish/Data2/Arman/Seq2Im"
-plot_pca_2d(mean_embeddings.numpy(),file_path,"mean_embeddings.png")
-plot_pca_2d(max_embeddings.numpy(),file_path,"max_embeddings.png")
+plot_pca_2d_labels(mean_embeddings,labels[:101],file_path,"mean_embeddings.png")
+plot_pca_2d_labels(max_embeddings,labels[:101],file_path,"max_embeddings.png")
 data_dict = {'Sequence':Train_sequences['Sequence'],'labels':labels,'mean_embeddings':mean_embeddings,'max_embeddings':max_embeddings}
 
-file_name = "DeepSTARR_data_no_map.json"
-with open(os.path.join(file_path,file_name), 'w') as file:
-    json.dump(data_dict, file)
+file_name = "DeepSTARR_data_no_map.pkl"
+with open(file_path+"/"+file_name, 'wb') as fp:
+    pickle.dump(data_dict,fp)
 print("The data has been saved to: ", os.path.join(file_path,file_name))
