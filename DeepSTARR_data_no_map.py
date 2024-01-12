@@ -19,8 +19,8 @@ print("Number of headers: ", len(Train_sequences['Header']))
 print("Sequence length: ", len(Train_sequences['Sequence'][0]))
 
 
-tokenizer = AutoTokenizer.from_pretrained("InstaDeepAI/nucleotide-transformer-2.5b-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im/")
-model = AutoModelForMaskedLM.from_pretrained("InstaDeepAI/nucleotide-transformer-2.5b-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im/")
+tokenizer = AutoTokenizer.from_pretrained("InstaDeepAI/nucleotide-transformer-2.5b-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im_model_cache/")
+model = AutoModelForMaskedLM.from_pretrained("InstaDeepAI/nucleotide-transformer-2.5b-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im_model_cache/")
 
 # Time to shuffle the sequences
 

@@ -19,8 +19,8 @@ print("Number of headers: ", len(Train_sequences['Header']))
 print("Sequence length: ", len(Train_sequences['Sequence'][0]))
 
 
-tokenizer = AutoTokenizer.from_pretrained("InstaDeepAI/nucleotide-transformer-2.5b-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im/")
-model = AutoModelForMaskedLM.from_pretrained("InstaDeepAI/nucleotide-transformer-2.5b-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im/")
+tokenizer = AutoTokenizer.from_pretrained("InstaDeepAI/nucleotide-transformer-2.5b-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im_model_cache/")
+model = AutoModelForMaskedLM.from_pretrained("InstaDeepAI/nucleotide-transformer-2.5b-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im_model_cache/")
 
 # Time to tokenize the sequences
 data_train = Dataset.from_dict({'Sequence':Train_sequences['Sequence'],'labels':labels})
@@ -30,8 +30,7 @@ def tokenize_function(examples):
     return tokenizer(examples['Sequence'], return_tensors="pt", truncation=True, padding="max_length", max_length=249)
 data_tokenizations = data_train.map(tokenize_function, batched=True)
 print(data_tokenizations)
-hidden_state = model(data_tokenizations['input_ids'])
-data_loader = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm_probability=False)
-print(hidden_state.shape)
+
+
 
 

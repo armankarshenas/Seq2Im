@@ -19,8 +19,8 @@ print("Number of headers: ", len(Train_sequences['Header']))
 print("Sequence length: ", len(Train_sequences['Sequence'][0]))
 
 
-tokenizer = AutoTokenizer.from_pretrained("InstaDeepAI/nucleotide-transformer-2.5b-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im/")
-model = AutoModelForMaskedLM.from_pretrained("InstaDeepAI/nucleotide-transformer-2.5b-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im/")
+tokenizer = AutoTokenizer.from_pretrained("InstaDeepAI/nucleotide-transformer-2.5b-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im_model_cache/")
+model = AutoModelForMaskedLM.from_pretrained("InstaDeepAI/nucleotide-transformer-2.5b-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im_model_cache/")
 
 Train_sequences, labels = shuffle_dict(Train_sequences, labels)
 
@@ -30,7 +30,7 @@ labels_subset = labels[:100]
 
 # Time to tokenize the sequences
 
-tokenized_sequences_ids = tokenizer.batch_encode_plus(Seq_subset, return_tensors="pt",truncation=True,padding="max_length",max_length=249)['input_ids']
+tokenized_sequences_ids = tokenizer.batch_tokenize(Seq_subset, return_tensors="pt",truncation=True,padding="max_length",max_length=249)['input_ids']
 attention_mask = (tokenized_sequences_ids != tokenizer.pad_token_id)
 print("Tokenization is done!")
 
