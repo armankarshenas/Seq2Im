@@ -24,7 +24,11 @@ print("Sequence length: ", len(Train_sequences['Sequence'][0]))
 
 
 num_labels =2
+<<<<<<< HEAD
 model = AutoModelForSequenceClassification.from_pretrained("InstaDeepAI/nucleotide-transformer-v2-100m-multi-species",num_labels=num_labels,cache_dir="/media/zebrafish/Data2/Arman/Seq2Im_model_cache/",trust_remote_code=True)
+=======
+model = AutoModelForSequenceClassification.from_pretrained("InstaDeepAI/nucleotide-transformer-v2-100m-multi-species",num_labels=num_labels,cache_dir="/media/zebrafish/Data2/Arman/Seq2Im_model_cache/")
+>>>>>>> 887f4db1eea3194bffe3850dc2cfe033d61754b7
 model.to(device)
 
 from peft import get_peft_model
@@ -33,10 +37,19 @@ lora_classifier = get_peft_model(model, peft_config)
 lora_classifier.print_trainable_parameters()
 lora_classifier.to(device)
 print(lora_classifier)
+<<<<<<< HEAD
 
 
 train_sequences = Train_sequences['Sequence']
 train_labels = labels.astype(int)
+=======
+example_data = load_dataset("InstaDeepAI/nucleotide_transformer_downstream_tasks","promoter_all",split="train",streaming=False)
+
+print("Example data structure: ", example_data)
+
+train_sequences = example_data['sequence']
+train_labels = example_data['label']
+>>>>>>> 887f4db1eea3194bffe3850dc2cfe033d61754b7
 
 train_sequences, validation_sequences, train_labels, validation_labels = train_test_split(train_sequences, train_labels, test_size=0.05, random_state=42)
 
@@ -45,19 +58,31 @@ sequence, label = train_sequences[idx_sequence], train_labels[idx_sequence]
 print(f"The DNA sequence is {sequence}.")
 print(f"Its associated label is label {label}.")
 
+<<<<<<< HEAD
 tokenizer = AutoTokenizer.from_pretrained("InstaDeepAI/nucleotide-transformer-v2-100m-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im_model_cache/",trust_remote_code=True)
+=======
+tokenizer = AutoTokenizer.from_pretrained("InstaDeepAI/nucleotide-transformer-v2-100m-multi-species",cache_dir="/media/zebrafish/Data2/Arman/Seq2Im_model_cache/")
+>>>>>>> 887f4db1eea3194bffe3850dc2cfe033d61754b7
 
 ds_train_promoter = Dataset.from_dict({"data": train_sequences,'labels':train_labels})
 ds_validation_promoter = Dataset.from_dict({"data": validation_sequences,'labels':validation_labels})
 
 def tokenize_function(examples):
+<<<<<<< HEAD
     return tokenizer(examples['data'])
+=======
+    return tokenizer(examples['data'], return_tensors="pt", truncation=True, padding="max_length", max_length=249)
+>>>>>>> 887f4db1eea3194bffe3850dc2cfe033d61754b7
 
 tokenized_train_data = ds_train_promoter.map(tokenize_function, batched=True,remove_columns=['data'])
 tokenized_validation_data = ds_validation_promoter.map(tokenize_function, batched=True,remove_columns=['data'])
 
 batch_size = 8
+<<<<<<< HEAD
 model_name='NT-v2-100m-multi-species-DeepSTARR'
+=======
+model_name='nucleotide-transformer'
+>>>>>>> 887f4db1eea3194bffe3850dc2cfe033d61754b7
 args_promoter = TrainingArguments(
     f"{model_name}-finetuned-lora-NucleotideTransformer",
     remove_unused_columns=False,
@@ -87,6 +112,7 @@ trainer = Trainer(model.to(device), args_promoter, train_dataset=tokenized_train
 train_result = trainer.train()
 
 
+<<<<<<< HEAD
 curve_evaluation_f1_score =[[a['step'],a['eval_f1_score']] for a in trainer.state.log_history if 'eval_f1_score' in a.keys()]
 eval_f1_score = [c[1] for c in curve_evaluation_f1_score]
 steps = [c[0] for c in curve_evaluation_f1_score]
@@ -96,6 +122,9 @@ plt.xlabel("Steps")
 plt.ylabel("F1 score")
 plt.legend()
 plt.show()
+=======
+
+>>>>>>> 887f4db1eea3194bffe3850dc2cfe033d61754b7
 
 
 
