@@ -1,5 +1,6 @@
 function coordinates = segmentImage(X)
-%segmentImage Segment image and return a structure of embryos with bounding 
+
+% segmentImage Segment image and return a structure of embryos with bounding 
 % boxes around embryos that meet an area restriction  
 
 % Written by A. Karshenas -- Jan 31, 2024
