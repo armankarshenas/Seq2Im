@@ -1,0 +1,25 @@
+function I_sub = removeBorder(I)
+
+% removeBorder uses the histogram count of intensity to determine if
+% borders exist. The function then truncates image I so it can be used for
+% downstream processing 
+
+% Written by A. Karshenas -- Jan 31, 2024
+%----------------------------------------------------
+
+% horizontal profiles
+left_border = 0
+for i=1:size(I,1)
+    horizontal_profile = I(floor(size(I,1)/2),:);
+    h_changes = ischange(double(horizontal_profile));
+end
+
+left_border = find(h_changes,1);
+right_border = find(flip(h_changes),1);
+vertical_profile = I(floor(size(I,2)/2),:);
+v_changes = ischange(double(vertical_profile));
+top_border = find(v_changes,1);
+bottom_border = find(flip(v_changes),1);
+
+I_sub = I(top_border:size(I,1)-bottom_border,left_border:size(I,2)-right_border);
+end
