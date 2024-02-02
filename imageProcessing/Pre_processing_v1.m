@@ -14,7 +14,7 @@ img_patch_size = 10000;
 cd(Path_to_overhead_directory)
 logs = "";
 DIRS = dir(pwd);
-for d=10:length(DIRS)
+for d=3:length(DIRS)
     if DIRS(d).isdir == 1
         cd(DIRS(d).folder+"/"+DIRS(d).name)
         fprintf("Processing ... %s \n",DIRS(d).name)
@@ -38,11 +38,11 @@ for d=10:length(DIRS)
             for i=1:n
                 for j=1:m
                     I_local = I((i-1)*img_patch_size+1:i*img_patch_size,(j-1)*img_patch_size+1:j*img_patch_size);
-                    coordinates = segmentImag_v3(I_local);
+                    coordinates = segmentImage_v3(I_local);
                     writeImages(I_local,coordinates,folder_name,Path_to_overhead_directory+"/"+DIRS(d).name,img_patch_size);
                 end
                 I_local = I((i-1)*img_patch_size+1:i*img_patch_size,j*img_patch_size+1:end);
-                coordinates = segmentImag_v3(I_local);
+                coordinates = segmentImage_v3(I_local);
                 writeImages(I_local,coordinates,folder_name,Path_to_overhead_directory+"/"+DIRS(d).name,img_patch_size)
             end
             % For the final row of tiles that have a height less than
@@ -61,4 +61,6 @@ for d=10:length(DIRS)
         end
     end
 end
+cd(Path_to_overhead_directory)
+writematrix(logs,"Logs.txt")
 
