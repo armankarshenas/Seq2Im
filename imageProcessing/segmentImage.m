@@ -35,7 +35,7 @@ embryos = regionprops(labeledImage, 'BoundingBox');
 coordinates = [];
 for i = 1:numel(embryos)
     area = embryos(i).BoundingBox(3)*embryos(i).BoundingBox(4);
-    if area > 150000 && area <300000
+    if area > 150000 && area <400000
         coordinates = [coordinates;embryos(i).BoundingBox];
     end
 end

@@ -27,9 +27,9 @@ if size(coordinates,1)>1
         sp(3)= min(ceil(coordinates(i,1) + coordinates(i,3)),size(I,2)); %xmax
         sp(4)=min(ceil(coordinates(i,2) +coordinates(i,4)),size(I,1)); %ymax
         embryo_im = I(sp(2):sp(4), sp(1): sp(3));
-        image(embryo_im)
+        image(embryo_im);
+        embryo_im = alignImage(embryo_im);
         % Write image to graphics file.
-
         f_name = name+"_"+string(counter+i)+".tif";
         imwrite(imadjust(embryo_im),f_name)
     end
