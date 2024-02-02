@@ -14,7 +14,7 @@ img_patch_size = 10000;
 cd(Path_to_overhead_directory)
 logs = "";
 DIRS = dir(pwd);
-for d=8:length(DIRS)
+for d=10:length(DIRS)
     if DIRS(d).isdir == 1
         cd(DIRS(d).folder+"/"+DIRS(d).name)
         fprintf("Processing ... %s \n",DIRS(d).name)
